@@ -48,3 +48,5 @@ generated_output/
 *.local.yaml
 *.local.yml
 values.local.yaml
+
+PROJECT_DETAILED_EXPLANATION.txt
