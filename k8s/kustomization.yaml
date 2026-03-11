@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: aiops-triage
+resources:
+  - 00-namespace.yaml
+  - 01-configmap.yaml
+  - 03-api-service.yaml
+  - 04-api-deployment.yaml
+  - 05-worker-deployment.yaml
+  - 06-api-hpa.yaml
+  - 07-worker-hpa.yaml
+  - 08-api-pdb.yaml
+  - 09-worker-pdb.yaml
+  - 10-ingress.yaml

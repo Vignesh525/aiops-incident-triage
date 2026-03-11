@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "aiops-triage.configName" . }}
+  labels:
+    {{- include "aiops-triage.labels" . | nindent 4 }}
+data:
+  OPENAI_BASE_URL: {{ .Values.config.openaiBaseUrl | quote }}
+  MODEL_NAME: {{ .Values.config.modelName | quote }}
+  CREWAI_TRACING_ENABLED: {{ .Values.config.crewaiTracingEnabled | quote }}
+  KAFKA_BOOTSTRAP_SERVERS: {{ .Values.config.kafkaBootstrapServers | quote }}
+  REDIS_HOST: {{ .Values.config.redisHost | quote }}
+  REDIS_PORT: {{ .Values.config.redisPort | quote }}

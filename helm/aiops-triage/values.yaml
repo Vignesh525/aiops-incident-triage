@@ -1,0 +1,113 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: ghcr.io/your-org/aiops-incident-triage
+  tag: latest
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+existingSecret: ""
+
+secret:
+  create: true
+  openaiApiKey: replace-me
+
+config:
+  openaiBaseUrl: https://api.groq.com/openai/v1
+  modelName: llama-3.3-70b-versatile
+  crewaiTracingEnabled: "false"
+  kafkaBootstrapServers: kafka-bootstrap.kafka.svc.cluster.local:9092
+  redisHost: redis-master.redis.svc.cluster.local
+  redisPort: "6379"
+
+podSecurityContext:
+  runAsNonRoot: true
+  fsGroup: 1000
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+api:
+  replicaCount: 3
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 512Mi
+  readinessProbe:
+    path: /readyz
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 6
+  livenessProbe:
+    path: /healthz
+    initialDelaySeconds: 20
+    periodSeconds: 20
+    timeoutSeconds: 3
+    failureThreshold: 3
+  hpa:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    cpuAverageUtilization: 70
+    memoryAverageUtilization: 75
+  pdb:
+    enabled: true
+    minAvailable: 2
+
+worker:
+  replicaCount: 2
+  command:
+    - python
+    - -m
+    - workers.kafka_worker
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 512Mi
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    cpuAverageUtilization: 70
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+topologySpreadConstraints:
+  enabled: true
+  topologyKey: kubernetes.io/hostname
+  whenUnsatisfiable: ScheduleAnyway
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 1m
+  hosts:
+    - host: aiops-triage.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

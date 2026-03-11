@@ -1,0 +1,15 @@
+{{- if .Values.worker.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "aiops-triage.workerName" . }}
+  labels:
+    app.kubernetes.io/component: worker
+    {{- include "aiops-triage.labels" . | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.worker.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: worker
+      {{- include "aiops-triage.selectorLabels" . | nindent 6 }}
+{{- end }}

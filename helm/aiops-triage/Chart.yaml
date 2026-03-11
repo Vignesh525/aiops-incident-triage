@@ -1,0 +1,6 @@
+apiVersion: v2
+name: aiops-triage
+description: Helm chart for the AIOps Incident Triage Crew platform
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

@@ -1,0 +1,7 @@
+crewai
+fastapi
+uvicorn[standard]
+python-dotenv
+kafka-python
+redis
+langchain

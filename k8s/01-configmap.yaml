@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aiops-triage-config
+  namespace: aiops-triage
+data:
+  OPENAI_BASE_URL: https://api.groq.com/openai/v1
+  MODEL_NAME: llama-3.3-70b-versatile
+  CREWAI_TRACING_ENABLED: "false"
+  KAFKA_BOOTSTRAP_SERVERS: kafka-bootstrap.kafka.svc.cluster.local:9092
+  REDIS_HOST: redis-master.redis.svc.cluster.local
+  REDIS_PORT: "6379"

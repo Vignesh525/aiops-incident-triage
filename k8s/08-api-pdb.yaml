@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: aiops-triage-api
+  namespace: aiops-triage
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: aiops-triage-api

@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: triage-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: triage-api
+  template:
+    metadata:
+      labels:
+        app: triage-api
+    spec:
+      containers:
+      - name: triage-api
+        image: ai-triage
+        ports:
+        - containerPort: 8000
