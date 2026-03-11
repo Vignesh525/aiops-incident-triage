@@ -6,6 +6,7 @@ from redis.exceptions import RedisError
 
 from messaging.kafka_producer import kafka_ready, send_alert
 from messaging.result_store import get_incident_result, redis_ready
+from triage_api.models import IncidentAcceptedResponse, IncidentAlertIn
 
 app = FastAPI()
 
@@ -26,10 +27,10 @@ def readyz():
     return {"status": "ready", "checks": checks}
 
 
-@app.post("/incident")
-def receive_incident(alert: dict):
+@app.post("/incident", response_model=IncidentAcceptedResponse)
+def receive_incident(alert: IncidentAlertIn):
     incident_id = str(uuid4())
-    alert_with_id = {"incident_id": incident_id, **alert}
+    alert_with_id = {"incident_id": incident_id, **alert.as_payload()}
 
     try:
         send_alert(alert_with_id)
@@ -44,7 +45,7 @@ def receive_incident(alert: dict):
     except KafkaError as exc:
         raise HTTPException(status_code=503, detail=f"Kafka publish failed: {exc}") from exc
 
-    return {"status": "alert received and queued", "incident_id": incident_id}
+    return IncidentAcceptedResponse(status="alert received and queued", incident_id=incident_id)
 
 
 @app.get("/incident/{incident_id}")

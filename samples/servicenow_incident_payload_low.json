@@ -1,0 +1,11 @@
+{
+  "servicenow_sys_id": "noise123def456",
+  "servicenow_number": "INC0010002",
+  "severity": "low",
+  "alert": "CPU briefly exceeded threshold during scheduled maintenance",
+  "host": "app-nonprod-02",
+  "metric": "cpu_usage",
+  "value": "82%",
+  "service": "checkout",
+  "timestamp": "2026-03-11T11:15:00Z"
+}

@@ -3,6 +3,7 @@ import json
 from kafka import KafkaConsumer
 
 from app_env import required_env
+from integrations.servicenow_adapter import push_triage_update, servicenow_enabled
 from messaging.kafka_producer import publish_triage_result
 from messaging.result_store import save_incident_result
 from orchestrator.crew import run_triage
@@ -14,14 +15,6 @@ def build_consumer():
         bootstrap_servers=required_env("KAFKA_BOOTSTRAP_SERVERS"),
         value_deserializer=lambda m: json.loads(m.decode("utf-8")),
     )
-
-
-def _serialize_triage_result(result):
-    if hasattr(result, "raw"):
-        return result.raw
-    if isinstance(result, (dict, list, str, int, float, bool)) or result is None:
-        return result
-    return str(result)
 
 
 def main():
@@ -38,8 +31,21 @@ def main():
                 "incident_id": incident_id,
                 "status": "completed",
                 "alert": alert,
-                "triage_result": _serialize_triage_result(triage_result),
+                "triage_result": triage_result,
             }
+
+            if servicenow_enabled() and alert.get("servicenow_sys_id"):
+                try:
+                    servicenow_update = push_triage_update(alert, triage_result)
+                    result_payload["servicenow_update"] = servicenow_update or {
+                        "status": "skipped",
+                        "reason": "ServiceNow update returned no response.",
+                    }
+                except Exception as exc:
+                    result_payload["servicenow_update"] = {
+                        "status": "failed",
+                        "error": str(exc),
+                    }
         except Exception as exc:
             result_payload = {
                 "incident_id": incident_id,

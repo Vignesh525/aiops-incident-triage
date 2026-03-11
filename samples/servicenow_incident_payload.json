@@ -1,0 +1,11 @@
+{
+  "servicenow_sys_id": "abc123def456",
+  "servicenow_number": "INC0010001",
+  "severity": "critical",
+  "alert": "Disk usage above 95% on database server",
+  "host": "db-prod-01",
+  "metric": "disk_usage",
+  "value": "96%",
+  "filesystem": "/var/lib/mysql",
+  "timestamp": "2026-03-11T10:30:00Z"
+}

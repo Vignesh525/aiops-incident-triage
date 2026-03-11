@@ -5,3 +5,4 @@ python-dotenv
 kafka-python
 redis
 langchain
+requests
