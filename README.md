@@ -4,9 +4,20 @@ An event-driven AI incident triage system that accepts monitoring alerts, queues
 
 ## Overview
 
-This project is a prototype AIOps pipeline for automated incident qualification and routing. It is designed to separate alert ingestion from AI processing so the system can scale more cleanly and tolerate slower LLM-backed reasoning.
 
-The current flow is:
+This project is an AI-assisted incident triage platform.
+
+Instead of sending every monitoring alert directly to an engineer for manual review, the system:
+- receives the alert through an API
+- queues it through Kafka
+- processes it asynchronously using a multi-agent AI workflow
+- determines likely validity, impact, and routing
+- stores the result for retrieval
+- can now attempt to push the triage decision back to the same ServiceNow incident automatically
+
+In practical terms, it acts as an intelligent first-line incident analyst.
+
+Technical  flow is:
 
 1. A client sends an alert to the API.
 2. The API generates an `incident_id` and publishes the alert to Kafka.
